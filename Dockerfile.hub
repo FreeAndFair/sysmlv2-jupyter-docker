@@ -70,7 +70,7 @@ WORKDIR ${HOME}/SysML-v2-Release-${RELEASE}/install/jupyter
 ## This is the path that `conda init` creates but `conda init` has no
 ## effect here, so set the `PATH` by hand, otherwise `install.sh` will
 ## not work.
-ENV PATH="${HOME}/conda/bin:${HOME}/conda/condabin:/usr/local/openjdk-17/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ENV PATH "${HOME}/conda/bin:${HOME}/conda/condabin:/usr/local/openjdk-17/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 RUN ./install.sh
 
 ## Uninstall the terminal feature for security reasons.
@@ -98,7 +98,7 @@ RUN find . -name \*.ipynb -exec jupyter trust \{\} \;
 ## at runtime with out changing this Dockerfile.
 RUN mkdir .scripts
 COPY --chown=${NB_USER} scripts/hub.sh .scripts/start.sh
-ENV NO_TOKEN=no
+ENV NO_TOKEN no
 RUN chmod 755 .scripts/start.sh
 
 EXPOSE 8888
