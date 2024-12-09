@@ -1,0 +1,27 @@
+name: Test DockerHub Build
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths: 
+      - Makefile
+      - Dockerfile.hub
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+        with:
+          install: true
+
+      - name: Build DockerHub image
+        uses: docker/build-push-action@v6
+        with:
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          file: Dockerfile.hub
+          platforms: linux/amd64,linux/arm64
+
