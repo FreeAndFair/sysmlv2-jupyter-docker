@@ -1,0 +1,47 @@
+# .github/workflows/dockerhub-image.yml
+# Author: Daniel M. Zimmerman
+# Created: 2024-12-09
+# Modified: 2024-12-09
+
+# This workflow builds the DockerHub image, and pushes it to
+# DockerHub if the action was triggered on the main branch.
+
+name: Build and Push (on main only) DockerHub Build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+        with:
+          install: true
+
+      - name: Extract SysMLv2 Version from Dockerfile
+        id: sysmlv2-version
+        run: |
+          SYSML_VERSION=`grep "ARG RELEASE" Dockerfile.hub | sed 's/.*=\(.*\)/\1/'`
+          echo "SYSML_VERSION=${SYSML_VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push DockerHub image
+        uses: docker/build-push-action@v6
+        with:
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          file: Dockerfile.hub
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.ref_name == 'main' }} # only push to DockerHub on main
+          tags: |
+            freeandfair/sysmlv2-jupyter:latest
+            freeandfair/sysmlv2-jupyter:${{ steps.sysmlv2-version.outputs.SYSML_VERSION }}
