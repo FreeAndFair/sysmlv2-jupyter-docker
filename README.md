@@ -6,15 +6,11 @@ The setup is taken from the [Jupyter installation](https://github.com/Systems-Mo
 
 In addition, an [API Server](https://github.com/Systems-Modeling/SysML-v2-API-Services) is also started and everything published in Jupyter will be pushed into this server.
 
-## Update - Nov 2024
+## Update - Dec 2024
 
-Free & Fair had a need to continue to use a Docker container to
-support active R&D that uses SysMLv2, thus will be updating this image
-for new releases of the SysMLv2 Pilot Implementation.  Images will
-be pushed to 
-[Free & Fair's DockerHub](https://hub.docker.com/?namespace=freeandfair).
+Because Free & Fair is using SysMLv2 as part of active R&D and needs an up-to-date Docker container, we will be updating this image for new releases of the SysMLv2 Pilot Implementation as we find it necessary; we are not, however, committed to updating it for every SysMLv2 release in a prompt fashion.  Images will be pushed to [Free & Fair's DockerHub](https://hub.docker.com/?namespace=freeandfair).
 
-## Update - Oct 2024
+## Update - Oct 2024 (from gorenje)
 
 I [no longer actively](https://github.com/gorenje/sysmlv2-jupyter-docker/issues/19#issuecomment-2193902929) maintain this repository, all my apologises to those frustrated by that. I have no active interest in SysMLv2 and hence doing this for free was counterproductive for me.
 
@@ -34,9 +30,9 @@ See below for specific release links.
 
 You can also view notebooks via [nbviewer](https://nbviewer.jupyter.org/github/freeandfair/sysmlv2-jupyter-docker/tree/master/notebooks) and from there it's possible to start up [Binder](https://mybinder.org).
 
-### Dockerhub
+### DockerHub
 
-Docker images are also [available](https://hub.docker.com/r/freeandfair/sysmlv2-jupyter). These are only of the Jupyter installation not the API server.
+Images are also available [on DockerHub](https://hub.docker.com/r/freeandfair/sysmlv2-jupyter). These are only of the Jupyter installation, not the API server.
 
 See below for specific pull statements.
 
@@ -151,7 +147,7 @@ git checkout release-2020-12
 make run-hub
 ```
 
-That will locally start DockerHub Jupyter image with the 2020-12 release.
+That will locally start DockerHub Jupyter image with the 2020-12 release. Note that branches for some releases, from early 2023 to late 2024, are currently missing because the repository was not being actively updated during that time.
 
 ## Production Use?
 
@@ -178,22 +174,20 @@ time.
 
 ## Building a New Release
 
-**TODO: Update for F&F release.**
+Free & Fair DockerHub releases are pushed automatically by GitHub continuous deployment when the `main` branch is updated. The procedure for making a new release for a new SysMLv2 release is as follows.
 
-When a new 
+When a new
 [release tag](https://github.com/Systems-Modeling/SysML-v2-Release/tags) 
 becomes available, the following things need doing:
 
-(Since I do this once a month, I thought I might write this up - please ignore.)
-
 1. Ensure there is a corresponding [API Server](https://github.com/Systems-Modeling/SysML-v2-API-Services/tags) release.
-2. On the main branch, follow this [commit](https://github.com/freeandfair/sysmlv2-jupyter-docker/commit/2adf4b3fc24a7184e2e5f26ed9edd2d4ffce0370) to update all dockerfiles & Makefile for the new release (in this case 2021-03). Important is also the addition of the [github action](https://github.com/freeandfair/sysmlv2-jupyter-docker/blob/2adf4b3fc24a7184e2e5f26ed9edd2d4ffce0370/.github/workflows/2021-03.dockerpush.yml) for generating a docker image.
+2. Start a new branch from the main branch, and follow this [commit](https://github.com/FreeAndFair/sysmlv2-jupyter-docker/commit/1869262840e7fa3eb9ced8dc21a6119f5483543d) to update all dockerfiles & Makefile for the new release (in this case 2024-09 SysMLv2 with 2024-07 API server). 
 3. Run `make build` to check that all dockerfiles build locally. Make sure that Docker is running locally.
 4. In a terminal window, run `make spin-up` to start a Jupyter server locally.
-5. In another termainal window, run `make update-testsuite` to update all the test notebooks in the repository. This also retrieves the notebooks from the Docker images and, in the end, there is a commit similar to this [one](https://github.com/freeandfair/sysmlv2-jupyter-docker/commit/3597bc3cc1fa2375163b562b02765b4640e3af22).
-6. Create a new branch for the release, something like `release-2021-03` ain't bad :smiley:. On that branch, remove all github actions so that only the one for the branch is left, i.e. [this commit](https://github.com/freeandfair/sysmlv2-jupyter-docker/commit/5bba34afa7817098f8f5f2477cf076c9641d9703).
-7. Push main and the new branch to github.
-8. Done.
+5. In another terminal window, run `make update-testsuite` to update all the test notebooks in the repository. This also retrieves the notebooks from the Docker images and, in the end, there is a commit similar to this [one](https://github.com/freeandfair/sysmlv2-jupyter-docker/commit/3597bc3cc1fa2375163b562b02765b4640e3af22).
+6. Create a GitHub PR for the new branch and make sure that the GitHub Actions check succeeds.
+7. Merge the PR to `main`.
+8. Done. The new DockerHub image should be deployed to DockerHub automatically.
 
 ## Licensing
 

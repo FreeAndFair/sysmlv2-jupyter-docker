@@ -7,7 +7,7 @@ FROM openjdk:17-slim
 ##
 
 ## `wget` is used to retrieve Conda and SysML Release. Inkscape and
-## LaTeX is required for rendering notebooks as PDFs.
+## LaTeX are required for rendering notebooks as PDFs.
 RUN apt-get --quiet --yes update && apt-get install -yqq \
   gcc                         \
   g++                         \
@@ -24,9 +24,9 @@ RUN apt-get --quiet --yes update && apt-get install -yqq \
 ##
 ARG NB_USER=sysml
 ARG NB_UID=1000
-ENV USER ${NB_USER}
-ENV NB_UID ${NB_UID}
-ENV HOME /home/${NB_USER}
+ENV USER=${NB_USER}
+ENV NB_UID=${NB_UID}
+ENV HOME=/home/${NB_USER}
 
 RUN adduser --disabled-password \
     --gecos "Default user" \
@@ -107,4 +107,4 @@ RUN mv notebooks/*.ipynb .
 RUN find . -name \*.ipynb -exec jupyter trust \{\} \;
 
 EXPOSE 8888
-ENTRYPOINT jupyter lab --ip sysmljupyter --port 8888
+ENTRYPOINT ["jupyter", "lab", "--ip", "sysmljupyter", "--port", "8888"]

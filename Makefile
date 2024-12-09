@@ -1,7 +1,7 @@
 # SysMLv2 Release to use. First is release version of the API server,
 # the second is the release version of the SysMLv2
-release = 2024-07
-sysml_release= 2024-09
+release=2024-07
+sysml_release=2024-09
 
 # Jupyter - API server URL
 SYSML_API_SERVER=http://sysmlapiserver:9000
@@ -10,6 +10,18 @@ SYSML_API_SERVER=http://sysmlapiserver:9000
 DB_SERVER_URL = 'jdbc:postgresql://postgresdbserver:5432/sysml2'
 DB_USER = 'postgres'
 DB_PASSWORD = 'mysecretpassword'
+
+# URL for the docker repository to push the image to.
+DOCKER_REPOSITORY=registry-1.docker.io
+
+# Organization within the docker repository to push to.
+DOCKER_ORGANIZATION=freeandfair
+
+# Name of the docker image to be created.
+DOCKER_IMAGE=sysmlv2-jupyter
+
+# Platform for the docker image.
+DOCKER_PLATFORM="linux/amd64,linux/arm64"
 
 ##
 ## Local setup
@@ -46,12 +58,32 @@ run-mybinder: build-mybinder # run the mybinder jupyter image
 ## Dockerhub image
 ##
 .PHONY: build-hub
-build-hub: ## Build dockerhub image
-	docker build -t freeandfair/sysmlv2-jupyter:$(sysml_release) -f Dockerfile.hub --build-arg RELEASE=$(sysml_release) .
+build-hub: ## build DockerHub image
+	docker buildx build --platform $(DOCKER_PLATFORM) -t $(DOCKER_ORGANIZATION)/$(DOCKER_IMAGE):$(sysml_release) -f Dockerfile.hub --build-arg RELEASE=$(sysml_release) .
 
 .PHONY: run-hub
-run-hub: build-hub ## Run dockerhub image
-	docker run -p 8888:8888 -e NO_TOKEN=yes -it freeandfair/sysmlv2-jupyter:$(sysml_release)
+run-hub: build-hub ## run DockerHub image
+	docker run -p 8888:8888 -e NO_TOKEN=yes -it $(DOCKER_ORGANIZATION)/$(DOCKER_IMAGE):$(sysml_release)
+
+.PHONY: login
+login: ## log into DockerHub repository
+	$(info [info] logging into dockerhub repository)
+	docker login $(DOCKER_REPOSITORY)
+
+.PHONY: logout
+logout: ## log out of DockerHub repository
+	$(info [info] Logging out of dockerhub repository)
+	docker logout $(DOCKER_REPOSITORY)
+
+.PHONY: pull
+pull: login  ## pull docker image from DockerHub repository
+	docker pull $(DOCKER_ORGANIZATON)/$(DOCKER_IMAGE):latest
+
+.PHONY: push
+push: login ## push docker image to DockerHub repository
+	docker image tag $(DOCKER_ORGANIZATION)/$(DOCKER_IMAGE):$(sysml_release) $(DOCKER_ORGANIZATION)/$(DOCKER_IMAGE):latest
+	docker push $(DOCKER_ORGANIZATION)/$(DOCKER_IMAGE):$(sysml_release)
+	docker push $(DOCKER_ORGANIZATION)/$(DOCKER_IMAGE):latest
 
 ## Build all
 .PHONY: build
