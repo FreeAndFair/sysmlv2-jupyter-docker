@@ -1,7 +1,7 @@
 # SysMLv2 Release to use. First is release version of the API server,
 # the second is the release version of the SysMLv2
-release=2024-07
-sysml_release=2024-09
+release=2024-11
+sysml_release=2024-11
 
 # Jupyter - API server URL
 SYSML_API_SERVER=http://sysmlapiserver:9000

@@ -47,7 +47,7 @@ RUN wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-$(uname 
 
 ## Defining the RELEASE down here ensures that the previous commands
 ## can be recycled since they are not affected by the release version.
-ARG RELEASE=2024-09
+ARG RELEASE=2024-11
 
 ##
 ## SysML page: https://github.com/Systems-Modeling/SysML-v2-Release
